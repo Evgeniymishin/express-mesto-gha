@@ -21,5 +21,8 @@ app.use((req, res, next) => {
 });
 app.use("/users", require("./routes/user"));
 app.use("/cards", require("./routes/card"));
+app.all("*", (req, res) => {
+  res.status(404).send({ message: "Неправильный путь" });
+});
 
 app.listen(PORT);

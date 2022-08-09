@@ -8,12 +8,19 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === "CastError") {
+    .then((user) => {
+      if (!user) {
         return res
           .status(404)
           .send({ message: "Пользователь по указанному id не найден" });
+      }
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res
+          .status(400)
+          .send({ message: "Некорректный id пользователя" });
       }
       return res.status(500).send({ message: err.message });
     });
@@ -41,9 +48,16 @@ module.exports.updateProfile = (req, res) => {
       name: req.body.name,
       about: req.body.about,
     },
-    { new: true }
+    { new: true, runValidators: true }
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) =>
+      res.send({
+        _id: user._id,
+        avatar: user.avatar,
+        name: user.name,
+        about: user.about,
+      })
+    )
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
@@ -66,7 +80,14 @@ module.exports.updateAvatar = (req, res) => {
     },
     { new: true }
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) =>
+      res.send({
+        _id: user._id,
+        avatar: user.avatar,
+        name: user.name,
+        about: user.about,
+      })
+    )
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({

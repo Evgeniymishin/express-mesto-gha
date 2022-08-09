@@ -28,7 +28,7 @@ module.exports.deleteCardById = (req, res) => {
       if (err.name === "CastError") {
         return res
           .status(404)
-          .send({ message: "Пользователь по указанному id не найден" });
+          .send({ message: "Карточка по указанному id не найдена" });
       }
       return res.status(500).send({ message: "Произошла ошибка" });
     });
@@ -38,18 +38,21 @@ module.exports.likeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true, runValidators: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res
+          .status(404)
+          .send({ message: "Карточка по указанному id не найдена" });
+      }
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
           message: "Переданы некорректные данные",
         });
-      } else if (err.name === "CastError") {
-        return res
-          .status(404)
-          .send({ message: "Пользователь по указанному id не найден" });
       }
       return res.status(500).send({ message: "Произошла ошибка" });
     });
@@ -60,7 +63,14 @@ module.exports.dislikeCard = (req, res) =>
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res
+          .status(404)
+          .send({ message: "Карточка по указанному id не найдена" });
+      }
+      res.send({ data: card });
+    })
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
@@ -69,7 +79,7 @@ module.exports.dislikeCard = (req, res) =>
       } else if (err.name === "CastError") {
         return res
           .status(404)
-          .send({ message: "Пользователь по указанному id не найден" });
+          .send({ message: "Карточка по указанному id не найдена" });
       }
       return res.status(500).send({ message: "Произошла ошибка" });
     });
