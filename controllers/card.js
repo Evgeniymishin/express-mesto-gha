@@ -38,7 +38,7 @@ module.exports.likeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true }
+    { new: true }
   )
     .then((card) => {
       if (!card) {
@@ -49,7 +49,7 @@ module.exports.likeCard = (req, res) =>
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === "CastError") {
         return res.status(400).send({
           message: "Переданы некорректные данные",
         });
@@ -72,14 +72,10 @@ module.exports.dislikeCard = (req, res) =>
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Переданы некорректные данные",
-        });
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         return res
-          .status(404)
-          .send({ message: "Карточка по указанному id не найдена" });
+          .status(400)
+          .send({ message: "Переданы некорректные данные" });
       }
       return res.status(500).send({ message: "Произошла ошибка" });
     });
