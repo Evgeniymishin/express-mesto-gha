@@ -69,7 +69,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
         message: `Переданы некорректные данные: ${err}`,
       });
     }
-    return res.status(500).send({ message: 'Произошла ошибка' });
+    return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
   });
 
 module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(

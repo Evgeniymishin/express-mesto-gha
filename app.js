@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const { PORT = 3000 } = process.env;
 const bodyParser = require('body-parser');
+const { NOT_FOUND } = require('./utils/constants');
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 
 app.all('*', (req, res) => {
-  res.status(404).send({ message: 'Неправильный путь' });
+  res.status(NOT_FOUND).send({ message: 'Неправильный путь' });
 });
 
 app.listen(PORT);
