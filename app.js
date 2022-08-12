@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const { auth } = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/user');
 const { NOT_FOUND, INTERNAL_SERVER_ERROR, PORT = 3000 } = require('./utils/constants');
 
