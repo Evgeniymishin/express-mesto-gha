@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { UNAUTHORIZED, TOKEN_LIFETIME } = require('../utils/constants');
+const { UNAUTHORIZED, SECRET_KEY } = require('../utils/constants');
 
 const handleAuthError = (res) => {
   res
@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, TOKEN_LIFETIME);
+    payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
     return handleAuthError(res);
   }

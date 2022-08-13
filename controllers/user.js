@@ -52,15 +52,20 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(password, SALT_LENGTH).then((hash) => User.create({
     name, about, avatar, email, password: hash,
   })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      _id: user._id,
+      avatar: user.avatar,
+      name: user.name,
+      about: user.about,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else {
+        next(new InternalServerError('Произошла ошибка'));
       }
-      if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким  email уже существует'));
-      }
-      next(new InternalServerError('Произошла ошибка'));
     }));
 };
 
