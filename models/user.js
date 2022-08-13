@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const { REG_EXP_LINK } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return /^http(s|):\/\/(www.|)((\w+|\d+)(-|\.))+[a-z]{2,3}(\S+|)(#| +|)$/i.test(v);
+        return REG_EXP_LINK.test(v);
       },
       message: 'Поле avatar заполнено неправильно',
     },

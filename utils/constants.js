@@ -14,6 +14,12 @@ const TOKEN_LIFETIME = '1d';
 // server params
 const PORT = 3000;
 
+// RegExp patterns
+const REG_EXP_LINK = /^http(s|):\/\/(www.|)((\w+|\d+)(-|\.))+[a-z]{2,3}(\S+|)(#| +|)$/i;
+
+// other
+const MONGO_DUPLICATE_CODE = 11000;
+
 module.exports = {
   PORT,
   BAD_REQUEST,
@@ -25,4 +31,6 @@ module.exports = {
   SALT_LENGTH,
   SECRET_KEY,
   TOKEN_LIFETIME,
+  REG_EXP_LINK,
+  MONGO_DUPLICATE_CODE,
 };

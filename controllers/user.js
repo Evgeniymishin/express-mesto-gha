@@ -9,6 +9,7 @@ const {
   SALT_LENGTH,
   SECRET_KEY,
   TOKEN_LIFETIME,
+  MONGO_DUPLICATE_CODE,
 } = require('../utils/constants');
 
 module.exports.getUsers = (req, res, next) => {
@@ -61,7 +62,7 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
-      } else if (err.code === 11000) {
+      } else if (err.code === MONGO_DUPLICATE_CODE) {
         next(new ConflictError('Пользователь с таким email уже существует'));
       } else {
         next(new InternalServerError('Произошла ошибка'));
@@ -92,12 +93,12 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
-      } else if (err.name === 'CastError') {
+      } if (err.name === 'CastError') {
         next(new NotFoundError('Пользователь по указанному id не найден'));
-      } else {
-        next(new InternalServerError('Произошла ошибка'));
       }
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -131,15 +132,20 @@ module.exports.updateAvatar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
 
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Пользователь по указанному id не найден'));
       }
-      const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
-      return res.send({ token });
-    })
-    .catch(next);
+      bcrypt.compare(password, user.password, (err, isValidPassword) => {
+        if (!isValidPassword) {
+          return res.status(401).send({ message: 'пароль неверный' });
+        }
+        const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
+        return res.send({ token });
+      })
+        .catch(next);
+    });
 };
