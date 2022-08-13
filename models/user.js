@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле avatar должно быть заполнено'],
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator(v) {
+        return /^http(s|):\/\/(www.|)((\w+|\d+)(-|\.))+[a-z]{2,3}(\S+|)(#| +|)$/i.test(v);
+      },
+      message: 'Поле avatar заполнено неправильно',
+    },
   },
   email: {
     type: String,
