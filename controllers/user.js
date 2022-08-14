@@ -5,6 +5,7 @@ const NotFoundError = require('../errors/not-found');
 const BadRequestError = require('../errors/bad-request');
 const InternalServerError = require('../errors/internal-server-err');
 const ConflictError = require('../errors/conflict-err');
+const UnauthorizedError = require('../errors/unauthorized');
 const {
   SALT_LENGTH,
   SECRET_KEY,
@@ -22,6 +23,24 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
+        throw NotFoundError('Пользователь по указанному id не найден');
+      } else {
+        return res.send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new NotFoundError('Некорректный id пользователя'));
+      } else {
+        next(err);
+      }
+    });
+};
+
+module.exports.getCurrentUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
         next(new NotFoundError('Пользователь по указанному id не найден'));
       }
       return res.send({ data: user });
@@ -33,17 +52,6 @@ module.exports.getUserById = (req, res, next) => {
         next(new InternalServerError('Произошла ошибка'));
       }
     });
-};
-
-module.exports.getCurrentUserInfo = (req, res, next) => {
-  User.findById(req.user.id)
-    .then((user) => {
-      if (!user) {
-        next(new NotFoundError('Пользователь по указанному id не найден'));
-      }
-      return res.send({ data: user });
-    })
-    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -141,11 +149,11 @@ module.exports.login = (req, res, next) => {
       }
       bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          return res.status(401).send({ message: 'пароль неверный' });
+          next(new UnauthorizedError('Неверный пароль'));
         }
         const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
-        return res.send({ token });
-      })
-        .catch(next);
-    });
+        return res.cookie('access_token', token, { httpOnly: true }).send({ message: 'JWT сформирован' });
+      });
+    })
+    .catch(next);
 };
