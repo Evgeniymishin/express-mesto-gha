@@ -152,7 +152,7 @@ module.exports.login = (req, res, next) => {
           next(new UnauthorizedError('Неверный пароль'));
         }
         const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
-        return res.cookie('access_token', token, { httpOnly: true }).send({ message: 'JWT сформирован' });
+        return res.cookie('access_token', token, { httpOnly: true }).send({ token });
       });
     })
     .catch(next);
