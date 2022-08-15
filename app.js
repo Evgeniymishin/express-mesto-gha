@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/user');
-const { NOT_FOUND, PORT = 3000 } = require('./utils/constants');
+const { NOT_FOUND, PORT = 3000, REG_EXP_LINK } = require('./utils/constants');
 const errorHandler = require('./middlewares/error-handler');
 
 const app = express();
@@ -26,7 +26,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().pattern(REG_EXP_LINK),
     email: Joi.string().email().required(),
     password: Joi.string().required().min(8),
   }),
