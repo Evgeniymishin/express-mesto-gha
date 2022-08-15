@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found');
 const BadRequestError = require('../errors/bad-request');
-const InternalServerError = require('../errors/internal-server-err');
 const ConflictError = require('../errors/conflict-err');
 const UnauthorizedError = require('../errors/unauthorized');
 const {
@@ -25,7 +24,7 @@ module.exports.getUserById = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Пользователь по указанному id не найден'));
       } else {
-        return res.send({ data: user });
+        res.send({ data: user });
       }
     })
     .catch((err) => {
@@ -49,7 +48,7 @@ module.exports.getCurrentUserInfo = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new NotFoundError('Некорректный id пользователя'));
       } else {
-        next(new InternalServerError('Произошла ошибка'));
+        next(err);
       }
     });
 };
@@ -134,7 +133,7 @@ module.exports.updateAvatar = (req, res, next) => {
       } else if (err.name === 'CastError') {
         next(new NotFoundError('Пользователь по указанному id не найден'));
       } else {
-        next(new InternalServerError('Произошла ошибка'));
+        next(err);
       }
     });
 };

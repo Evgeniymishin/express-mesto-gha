@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found');
 const BadRequestError = require('../errors/bad-request');
-const InternalServerError = require('../errors/internal-server-err');
 const ForbiddenError = require('../errors/no-acess');
 
 module.exports.getCards = (req, res, next) => {
@@ -19,7 +18,7 @@ module.exports.createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
       }
-      next(new InternalServerError('Произошла ошибка'));
+      next(err);
     });
 };
 
@@ -31,7 +30,7 @@ module.exports.deleteCardById = (req, res, next) => {
       } else if (!card.owner.equals(req.user._id)) {
         next(new ForbiddenError('Удаление чужих карточек запрещено'));
       } else {
-        return res.send({ data: card });
+        res.send({ data: card });
       }
     })
     .catch((err) => {
@@ -52,7 +51,7 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      return res.send({ data: card });
+      res.send({ data: card });
     }
   })
   .catch((err) => {
@@ -72,7 +71,7 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      return res.send({ data: card });
+      res.send({ data: card });
     }
   })
   .catch((err) => {
