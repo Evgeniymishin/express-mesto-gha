@@ -28,16 +28,17 @@ module.exports.deleteCardById = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка по указанному id не найдена'));
-      } else if (card.owner.id !== req.user._id) {
+      } else if (!card.owner.equals(req.user._id)) {
         next(new ForbiddenError('Удаление чужих карточек запрещено'));
+      } else {
+        return res.send({ data: card });
       }
-      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new NotFoundError('Карточка по указанному id не найдена'));
       } else {
-        next(new InternalServerError('Произошла ошибка'));
+        next(err);
       }
     });
 };
@@ -58,7 +59,7 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (err.name === 'CastError') {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      next(new InternalServerError('Произошла ошибка'));
+      next(err);
     }
   });
 
@@ -70,7 +71,7 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   .then((card) => {
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
-    } {
+    } else {
       return res.send({ data: card });
     }
   })
@@ -78,6 +79,6 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (err.name === 'CastError') {
       next(new BadRequestError(`Переданы некорректные данные: ${err}`));
     } else {
-      next(new InternalServerError('Произошла ошибка'));
+      next(err);
     }
   });

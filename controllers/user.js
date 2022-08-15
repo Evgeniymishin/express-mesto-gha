@@ -23,7 +23,7 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw NotFoundError('Пользователь по указанному id не найден');
+        next(new NotFoundError('Пользователь по указанному id не найден'));
       } else {
         return res.send({ data: user });
       }
@@ -73,7 +73,7 @@ module.exports.createUser = (req, res, next) => {
       } else if (err.code === MONGO_DUPLICATE_CODE) {
         next(new ConflictError('Пользователь с таким email уже существует'));
       } else {
-        next(new InternalServerError('Произошла ошибка'));
+        next(err);
       }
     }));
 };
