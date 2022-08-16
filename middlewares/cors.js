@@ -1,8 +1,10 @@
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const allowedCors = [
   'localhost:3000',
-  'mesto.study.nomoredomains.sbs',
-  'api.mesto.study.nomoredomains.sbs',
+  'https://mesto.study.nomoredomains.sbs',
+  'https://api.mesto.study.nomoredomains.sbs',
+  'http://mesto.study.nomoredomains.sbs',
+  'http://api.mesto.study.nomoredomains.sbs',
 ];
 
 module.exports = (req, res, next) => {
