@@ -12,6 +12,8 @@ const {
   MONGO_DUPLICATE_CODE,
 } = require('../utils/constants');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -154,7 +156,11 @@ module.exports.login = (req, res, next) => {
           if (!isValidPassword) {
             return next(new UnauthorizedError('Неверный пароль'));
           }
-          const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
+          const token = jwt.sign(
+            { _id: user._id },
+            NODE_ENV === 'production' ? JWT_SECRET : SECRET_KEY,
+            { expiresIn: TOKEN_LIFETIME },
+          );
           return res.cookie('access_token', token, { httpOnly: true }).send({ token });
         });
       }
