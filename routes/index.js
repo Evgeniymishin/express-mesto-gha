@@ -20,6 +20,9 @@ router.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+router.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Вы вышли из системы' });
+});
 
 router.use('/users', auth, require('./user'));
 router.use('/cards', auth, require('./card'));
