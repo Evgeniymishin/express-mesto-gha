@@ -115,8 +115,10 @@ module.exports.updateAvatar = (req, res, next) => {
     {
       avatar: req.body.avatar,
     },
-    { new: true,
-      runValidators: true },
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => {
       if (!user) {
@@ -146,15 +148,16 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return next(new UnauthorizedError('Пользователь по указанному id не найден'));
+        next(new UnauthorizedError('Пользователь по указанному id не найден'));
+      } else {
+        bcrypt.compare(password, user.password, (err, isValidPassword) => {
+          if (!isValidPassword) {
+            return next(new UnauthorizedError('Неверный пароль'));
+          }
+          const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
+          return res.cookie('access_token', token, { httpOnly: true }).send({ token });
+        });
       }
-      bcrypt.compare(password, user.password, (err, isValidPassword) => {
-        if (!isValidPassword) {
-          return next(new UnauthorizedError('Неверный пароль'));
-        }
-        const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
-        return res.cookie('access_token', token, { httpOnly: true }).send({ token });
-      });
     })
     .catch(next);
 };

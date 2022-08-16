@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { default: isURL } = require('validator/lib/isURL');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -8,7 +9,11 @@ const cardSchema = new mongoose.Schema({
     maxlength: [30, 'Максимальная длина имени карточки 30 символов'],
   },
   link: {
-    type: isUrl,
+    type: String,
+    validate: {
+      validator: isURL,
+      message: 'Поле link заполнено неккоректно',
+    },
     required: [true, 'Поле link должно быть заполнено'],
   },
   owner: {

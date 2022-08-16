@@ -1,16 +1,17 @@
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const auth = require('../middlewares/auth');
 const { login, createUser } = require('../controllers/user');
 const { REG_EXP_LINK } = require('../utils/constants');
-const NotFoundError = require('./errors/not-found');
+const NotFoundError = require('../errors/not-found');
 
-app.post('/signin', celebrate({
+router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
 }), login);
-app.post('/signup', celebrate({
+router.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -20,10 +21,10 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use('/users', auth, require('./routes/user'));
-app.use('/cards', auth, require('./routes/card'));
+router.use('/users', auth, require('./user'));
+router.use('/cards', auth, require('./card'));
 
-app.all('*', auth, (req, res) => {
+router.all('*', auth, (req, res, next) => {
   next(new NotFoundError('Неправильный путь'));
 });
 
