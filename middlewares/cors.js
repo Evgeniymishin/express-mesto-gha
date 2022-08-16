@@ -10,6 +10,8 @@ const allowedCors = [
 module.exports = (req, res, next) => {
   const { method } = req;
   const { origin } = req.headers;
+  console.log(origin);
+  console.log(method);
   const requestHeaders = req.headers['access-control-request-headers'];
 
   // res.header('Access-Control-Allow-Origin', '*');
@@ -19,8 +21,8 @@ module.exports = (req, res, next) => {
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
     res.header('Access-Control-Allow-Headers', requestHeaders);
-    res.end();
+    return res.end();
   }
 
-  next();
+  return next();
 };
