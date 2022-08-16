@@ -7,7 +7,7 @@ const { PORT = 3000 } = require('./utils/constants');
 const errorHandler = require('./middlewares/error-handler');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { cors } = require('./middlewares/cors');
+const cors = require('./middlewares/cors');
 
 const app = express();
 
