@@ -8,7 +8,7 @@ const cardSchema = new mongoose.Schema({
     maxlength: [30, 'Максимальная длина имени карточки 30 символов'],
   },
   link: {
-    type: String,
+    type: isUrl,
     required: [true, 'Поле link должно быть заполнено'],
   },
   owner: {

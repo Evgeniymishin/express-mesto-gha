@@ -100,10 +100,11 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
-      } if (err.name === 'CastError') {
-        next(new NotFoundError('Пользователь по указанному id не найден'));
+      } else if (err.name === 'CastError') {
+        next(new BadRequestError('Пользователь по указанному id не найден'));
+      } else {
+        next(err);
       }
-      next(err);
     })
     .catch(next);
 };
@@ -114,7 +115,8 @@ module.exports.updateAvatar = (req, res, next) => {
     {
       avatar: req.body.avatar,
     },
-    { new: true },
+    { new: true,
+      runValidators: true },
   )
     .then((user) => {
       if (!user) {
@@ -131,7 +133,7 @@ module.exports.updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
       } else if (err.name === 'CastError') {
-        next(new NotFoundError('Пользователь по указанному id не найден'));
+        next(new BadRequestError('Пользователь по указанному id не найден'));
       } else {
         next(err);
       }
@@ -144,11 +146,11 @@ module.exports.login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        next(new UnauthorizedError('Пользователь по указанному id не найден'));
+        return next(new UnauthorizedError('Пользователь по указанному id не найден'));
       }
       bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          next(new UnauthorizedError('Неверный пароль'));
+          return next(new UnauthorizedError('Неверный пароль'));
         }
         const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: TOKEN_LIFETIME });
         return res.cookie('access_token', token, { httpOnly: true }).send({ token });
