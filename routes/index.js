@@ -24,8 +24,8 @@ router.get('/signout', (req, res) => {
   res.clearCookie('jwt').send({ message: 'Вы вышли из системы' });
 });
 
-router.use('/users', require('./user'));
-router.use('/cards', require('./card'));
+router.use('/users', auth, require('./user'));
+router.use('/cards', auth, require('./card'));
 
 router.all('*', (req, res, next) => {
   next(new NotFoundError('Неправильный путь'));
