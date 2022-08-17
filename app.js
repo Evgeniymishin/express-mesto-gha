@@ -18,13 +18,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://mesto.study.nomoredomains.sbs',
-    'https://api.mesto.study.nomoredomains.sbs',
-    'http://mesto.study.nomoredomains.sbs',
-    'http://api.mesto.study.nomoredomains.sbs',
-  ],
+  origin: '*',
   credentials: true,
 }));
 app.use(bodyParser.json());
