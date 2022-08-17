@@ -19,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(cors({
   origin: [
-    'localhost:3000',
+    'http://localhost:3000',
     'https://mesto.study.nomoredomains.sbs',
     'http://mesto.study.nomoredomains.sbs',
   ],
