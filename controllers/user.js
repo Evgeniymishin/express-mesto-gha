@@ -161,7 +161,7 @@ module.exports.login = (req, res, next) => {
             SECRET_KEY,
             { expiresIn: TOKEN_LIFETIME },
           );
-          return res.cookie('access_token', token, { httpOnly: true });
+          return res.cookie('access_token', token, { httpOnly: true }).send({ token });
         });
       }
     })
