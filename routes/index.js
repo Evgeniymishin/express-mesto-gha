@@ -27,7 +27,7 @@ router.get('/signout', (req, res) => {
 router.use('/users', require('./user'));
 router.use('/cards', require('./card'));
 
-router.all('*', auth, (req, res, next) => {
+router.all('*', (req, res, next) => {
   next(new NotFoundError('Неправильный путь'));
 });
 
