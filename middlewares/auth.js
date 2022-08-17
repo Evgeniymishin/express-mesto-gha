@@ -6,6 +6,9 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
   const token = req.cookies.access_token;
+  console.log(token);
+  console.log(NODE_ENV);
+  console.log(JWT_SECRET);
   let payload;
 
   try {
