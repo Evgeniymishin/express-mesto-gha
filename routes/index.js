@@ -21,7 +21,7 @@ router.post('/signup', celebrate({
   }),
 }), createUser);
 router.get('/signout', (req, res) => {
-  res.clearCookie('jwt').send({ message: 'Вы вышли из системы' });
+  res.clearCookie('access-token').send({ message: 'Вы вышли из системы' });
 });
 
 router.use('/users', auth, require('./user'));
