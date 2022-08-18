@@ -12,7 +12,9 @@ const {
   MONGO_DUPLICATE_CODE,
 } = require('../utils/constants');
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+require('dotenv').config();
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -158,7 +160,7 @@ module.exports.login = (req, res, next) => {
           }
           const token = jwt.sign(
             { _id: user._id },
-            SECRET_KEY,
+            NODE_ENV === 'production' ? JWT_SECRET : SECRET_KEY,
             { expiresIn: TOKEN_LIFETIME },
           );
           return res.cookie('access_token', token, { httpOnly: true }).send({ token });
