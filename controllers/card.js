@@ -52,7 +52,7 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      res.send({ card });
+      res.send({ message: 'kek' });
     }
   })
   .catch((err) => {
