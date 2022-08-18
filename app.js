@@ -21,7 +21,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-  origin: '*',
+  origin: ['localhost:3000',
+    'https://mesto.study.nomoredomains.sbs',
+    'https://api.mesto.study.nomoredomains.sbs',
+    'http://mesto.study.nomoredomains.sbs',
+    'http://api.mesto.study.nomoredomains.sbs'],
   credentials: true,
 }));
 app.use(requestLogger);
