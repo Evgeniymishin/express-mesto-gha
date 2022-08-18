@@ -24,6 +24,12 @@ router.get('/signout', (req, res) => {
   res.clearCookie('access-token').send({ message: 'Вы вышли из системы' });
 });
 
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 router.use('/users', auth, require('./user'));
 router.use('/cards', auth, require('./card'));
 
