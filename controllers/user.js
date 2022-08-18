@@ -44,7 +44,7 @@ module.exports.getCurrentUserInfo = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Пользователь по указанному id не найден'));
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
