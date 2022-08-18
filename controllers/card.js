@@ -13,7 +13,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`Переданы некорректные данные: ${err}`));
@@ -52,7 +52,7 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      res.send({ card });
+      res.send(card);
     }
   })
   .catch((err) => {
@@ -72,7 +72,7 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
     if (!card) {
       next(new NotFoundError('Карточка по указанному id не найдена'));
     } else {
-      res.send({ card });
+      res.send(card);
     }
   })
   .catch((err) => {
