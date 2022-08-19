@@ -163,7 +163,7 @@ module.exports.login = (req, res, next) => {
             NODE_ENV === 'production' ? JWT_SECRET : SECRET_KEY,
             { expiresIn: TOKEN_LIFETIME },
           );
-          return res.cookie('access_token', token, { httpOnly: true, sameSite: 'Lax' }).send({ token });
+          return res.cookie('access_token', token, { httpOnly: true, sameSite: 'None' }).send({ token });
         });
       }
     })
